@@ -1,4 +1,3 @@
-
 type State = string;
 type InputSymbol = string;
 
@@ -13,18 +12,15 @@ export interface DFADescription {
     acceptStates: State[]
 }
 
-/**
- * M = ()
- *  states
- *  alphabet
- *  transition(state, symbol)
- *  accept states
- */
 export default class DeterministicFiniteStateMachine {
     private description: DFADescription;
 
     constructor(description: DFADescription) {
         this.description = description;
+    }
+
+    getDescription(): DFADescription {
+        return this.description;
     }
 
     transition(state: State, symbol: InputSymbol): State {

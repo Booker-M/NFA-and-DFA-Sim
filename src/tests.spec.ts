@@ -1,7 +1,7 @@
 import test from 'ava';
 
-import DeterministicFiniteStateMachine, { DFADescription } from './DeterministicFiniteStateMachine';
-import NondeterministicFiniteStateMachine, { NFADescription } from './NondeterministicFiniteStateMachine';
+import DFA, { DFADescription } from './DeterministicFiniteStateMachine';
+import NFA, { NFADescription } from './NondeterministicFiniteStateMachine';
 import { NFAtoDFA } from './NFAtoDFA';
 
 const dfaTests: {
@@ -14,9 +14,9 @@ const dfaTests: {
     startsWith0: {
         description: {
             transitions: {
-                S: {0: 'A', 1: 'B'},
-                A: {0: 'A', 1: 'A'},
-                B: {0: 'B', 1: 'B'}
+                S: {0: 'A', 1: 'dead'},
+                dead: {0: 'dead', 1: 'dead'},
+                A: {0: 'A', 1: 'A'}
             },
             start: 'S',
             acceptStates: ['A']
@@ -58,6 +58,34 @@ const dfaTests: {
             '1',
             '1000',
             '110101'
+        ],
+    },
+
+    exam2problem4: {
+        description: {
+            transitions: {
+                a: {0: 'b', 1: 'dead'},
+                b: {0: 'c', 1: 'dead'},
+                c: {0: 'cd', 1: 'c'},
+                cd: {0: 'cd', 1: 'ace'},
+                ace: {0: 'bcd', 1: 'c'},
+                bcd: {0: 'cd', 1: 'ace'},
+                dead: {0: 'dead', 1: 'dead'}
+            },
+            start: 'a',
+            acceptStates: ['ace']
+        },
+        accepted: [
+            '0001',
+            '00010001',
+            '000101',
+            '00101101',
+        ],
+        rejected: [
+            '',
+            '000',
+            '10001',
+            '001010'
         ],
     }
 
@@ -170,18 +198,44 @@ const nfaTests: {
             '010101',
             '1010101110'
         ],
+    },
+
+    exam2problem4: {
+        description: {
+            transitions: {
+                a: {0: ['b']},
+                b: {0: ['c']},
+                c: {0: ['c', 'd'], 1: ['c']},
+                d: {1: ['e']},
+                e: {lambda: ['a']},
+            },
+            start: 'a',
+            acceptStates: ['e']
+        },
+        accepted: [
+            '0001',
+            '00010001',
+            '000101',
+            '00101101',
+        ],
+        rejected: [
+            '',
+            '000',
+            '10001',
+            '001010'
+        ],
     }
 
 }
 
 for(const [name, testDesc] of Object.entries(dfaTests)) {
     test(`${name}/dfa/constructor`, (t) =>{
-        const dfa = new DeterministicFiniteStateMachine(testDesc.description);
+        const dfa = new DFA(testDesc.description);
         t.truthy(dfa);
     });
 
     test(`${name}/dfa/transition`, (t) => {
-        const dfa = new DeterministicFiniteStateMachine(testDesc.description);
+        const dfa = new DFA(testDesc.description);
         const { transitions } = testDesc.description;
     
         for(const [state, stateTransitions] of Object.entries(transitions)) {
@@ -192,7 +246,7 @@ for(const [name, testDesc] of Object.entries(dfaTests)) {
     });
 
     test(`${name}/dfa/accepts`, (t) => {
-        const dfa = new DeterministicFiniteStateMachine(testDesc.description);
+        const dfa = new DFA(testDesc.description);
         const { accepted, rejected } = testDesc;
     
         for(const s of accepted) {
@@ -207,12 +261,12 @@ for(const [name, testDesc] of Object.entries(dfaTests)) {
 
 for(const [name, testDesc] of Object.entries(nfaTests)) {
     test(`${name}/nfa/constructor`, (t) =>{
-        const nfa = new NondeterministicFiniteStateMachine(testDesc.description);
+        const nfa = new NFA(testDesc.description);
         t.truthy(nfa);
     });
 
     test(`${name}/nfa/transitions`, (t) => {
-        const nfa = new NondeterministicFiniteStateMachine(testDesc.description);
+        const nfa = new NFA(testDesc.description);
         const { transitions } = testDesc.description;
     
         for(const [state, stateTransitions] of Object.entries(transitions)) {
@@ -223,7 +277,7 @@ for(const [name, testDesc] of Object.entries(nfaTests)) {
     });
 
     test(`${name}/nfa/accepts`, (t) => {
-        const nfa = new NondeterministicFiniteStateMachine(testDesc.description);
+        const nfa = new NFA(testDesc.description);
         const { accepted, rejected } = testDesc;
     
         for(const s of accepted) {
@@ -237,7 +291,13 @@ for(const [name, testDesc] of Object.entries(nfaTests)) {
 }
 
 test(`NFAtoDFA`, (t) => {
-    const nfa = new NondeterministicFiniteStateMachine(nfaTests['startsWith0'].description)
-    const dfa = new DeterministicFiniteStateMachine(dfaTests['startsWith0'].description)
+    let nfa = new NFA(nfaTests['startsWith0'].description)
+    let dfa = new DFA(dfaTests['startsWith0'].description)
+    // console.log(dfa.getDescription())
+    // t.assert(NFAtoDFA(nfa).getDescription() === dfa.getDescription());
+
+    nfa = new NFA(nfaTests['exam2problem4'].description)
+    dfa = new DFA(dfaTests['exam2problem4'].description)
+    console.log(dfa.getDescription())
     t.assert(NFAtoDFA(nfa) === dfa);
 });

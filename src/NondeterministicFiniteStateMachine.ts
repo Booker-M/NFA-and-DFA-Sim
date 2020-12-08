@@ -13,7 +13,7 @@ export interface NFADescription {
     acceptStates: State[]
 }
 
-export default class NondeterministicFiniteStateMachine {
+export default class NFA {
     private description: NFADescription;
 
     constructor(description: NFADescription) {

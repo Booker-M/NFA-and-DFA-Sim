@@ -12,7 +12,7 @@ export interface DFADescription {
     acceptStates: State[]
 }
 
-export default class DeterministicFiniteStateMachine {
+export default class DFA {
     private description: DFADescription;
 
     constructor(description: DFADescription) {

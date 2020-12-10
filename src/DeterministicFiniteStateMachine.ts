@@ -40,6 +40,10 @@ export default class DFA {
         return acceptStates.includes(state);
     }
 
+    equals(dfa: DFA): boolean {
+        return JSON.stringify(this.description) === JSON.stringify(dfa.getDescription())
+    }
+
     // accepts(s: string, state = this.description.start) {
     //     const { description: { acceptStates } } = this;
     //     const nextState = this.transition(state, s.charAt(0));

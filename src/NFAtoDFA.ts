@@ -74,7 +74,5 @@ export function NFAtoDFA(nfa: NFA): DFA {
         newDescription.transitions[state] = {...newTransitions};
     }
 
-    let dfa = new DFA(newDescription)
-    console.log(dfa.getDescription())
     return new DFA(newDescription)
 }

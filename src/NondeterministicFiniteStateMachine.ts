@@ -41,4 +41,8 @@ export default class NFA {
         return (s.length === 0) ? acceptStates.some(state => states.includes(state)) : 
                                 this.accepts(s.substr(1), nextStates)
     }
+
+    equals(nfa: NFA): boolean {
+        return JSON.stringify(this.description) === JSON.stringify(nfa.getDescription())
+    }
 }

@@ -3,6 +3,7 @@ import test from 'ava';
 import DFA, { DFADescription } from './DeterministicFiniteStateMachine';
 import NFA, { NFADescription } from './NondeterministicFiniteStateMachine';
 import { NFAtoDFA } from './NFAtoDFA';
+import { minimizeDFA } from './DFAMinimizer';
 
 const dfaTests: {
     [name: string]: {
@@ -15,8 +16,8 @@ const dfaTests: {
         description: {
             transitions: {
                 S: {0: 'A', 1: 'dead'},
-                dead: {0: 'dead', 1: 'dead'},
-                A: {0: 'A', 1: 'A'}
+                A: {0: 'A', 1: 'A'},
+                dead: {0: 'dead', 1: 'dead'}
             },
             start: 'S',
             acceptStates: ['A']
@@ -169,7 +170,8 @@ const nfaTests: {
             '1',
             '111110',
             '010101',
-            '1010101110'
+            '1010101110',
+            '1011111111010'
         ],
     },
 
@@ -290,14 +292,12 @@ for(const [name, testDesc] of Object.entries(nfaTests)) {
     });
 }
 
-test(`NFAtoDFA`, (t) => {
+test(`NFAtoDFA and minimizeDFA`, (t) => {
     let nfa = new NFA(nfaTests['startsWith0'].description)
     let dfa = new DFA(dfaTests['startsWith0'].description)
-    // console.log(dfa.getDescription())
-    // t.assert(NFAtoDFA(nfa).getDescription() === dfa.getDescription());
+    t.assert(minimizeDFA(NFAtoDFA(nfa)).equals(minimizeDFA(dfa)));
 
     nfa = new NFA(nfaTests['exam2problem4'].description)
     dfa = new DFA(dfaTests['exam2problem4'].description)
-    console.log(dfa.getDescription())
-    t.assert(NFAtoDFA(nfa) === dfa);
+    t.assert(minimizeDFA(NFAtoDFA(nfa)).equals(minimizeDFA(dfa)));
 });

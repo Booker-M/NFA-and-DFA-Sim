@@ -33,6 +33,7 @@
     ],
     "ignoreWords": [
         "clonedeep",
+        "cmsi",
         "dfa's",
         "dfas",
         "nfa",

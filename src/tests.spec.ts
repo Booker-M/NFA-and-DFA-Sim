@@ -300,4 +300,12 @@ test(`NFAtoDFA and minimizeDFA`, (t) => {
     nfa = new NFA(nfaTests['exam2problem4'].description)
     dfa = new DFA(dfaTests['exam2problem4'].description)
     t.assert(minimizeDFA(NFAtoDFA(nfa)).equals(minimizeDFA(dfa)));
+
+    nfa = new NFA(nfaTests['startsAndEndsWith1'].description)
+    let nfa2 = new NFA(nfaTests['startsAndEndsWith1WithLambda'].description)
+    console.log(JSON.stringify(nfa.getDescription()))
+    console.log(JSON.stringify(nfa2.getDescription()))
+    console.log(JSON.stringify(NFAtoDFA(nfa).getDescription()))
+    console.log(JSON.stringify(NFAtoDFA(nfa2).getDescription()))
+    t.assert(minimizeDFA(NFAtoDFA(nfa)).equals(minimizeDFA(NFAtoDFA(nfa2))));
 });

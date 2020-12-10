@@ -1,13 +1,12 @@
 import DFA from './DeterministicFiniteStateMachine';
 
-// const clone = (items) => items.map(item => Array.isArray(item) ? clone(item) : item);
 function updateGroup(group, groups, nextGroups, description, newDescription, i) {
     for (let otherGroup of [...groups, ...nextGroups]) {
         if (group[0].includes(otherGroup[1][0])) { otherGroup[1][0] = `q${i}`}
         if (group[0].includes(otherGroup[1][1])) { otherGroup[1][1] = `q${i}`}
     }
-    if (group[0].includes(description.start)) { description.start = `q${i}`}
-    if (description.acceptStates.some(state => group[0].includes(state))) { newDescription.acceptStates.push(`q${i}`)}
+    if (group[0].includes(description.start)) { description.start = `q${i}`} //update start start
+    if (description.acceptStates.some(state => group[0].includes(state))) { newDescription.acceptStates.push(`q${i}`)} //update accept states
     groups.splice(groups.indexOf(group), 1)
     group[0] = [`q${i}`]
     nextGroups.push(group)
@@ -51,9 +50,7 @@ export function minimizeDFA(dfa: DFA): DFA {
     stack.push(groups.find(g => g[0].includes(description.start)))
     while (stack.length > 0) { //simplify/standardize state names
         let group = stack.pop()
-        // console.log("BEFORE", "GROUPS: ", groups, "NEXT GROUPS: ", nextGroups)
         updateGroup(group, groups, nextGroups, description, newDescription, i)
-        // console.log("AFTER", "GROUPS: ", groups, "NEXT GROUPS: ", nextGroups)
         for (const next of group[1].filter(s => groups.map(g => g[0][0]).includes(s))) {
             stack.push(groups.find(g => g[0][0] === next))
         }

@@ -21,7 +21,7 @@ export default class NFA {
     }
 
     getDescription(): NFADescription {
-        return this.description;
+        return JSON.parse(JSON.stringify(this.description))
     }
 
     allTransitions(states: State[], symbol: InputSymbol): State[] {

@@ -15,9 +15,9 @@ const dfaTests: {
     startsWith0: {
         description: {
             transitions: {
-                S: {0: 'A', 1: 'dead'},
+                S: {0: 'A', 1: 'B'},
                 A: {0: 'A', 1: 'A'},
-                dead: {0: 'dead', 1: 'dead'}
+                B: {0: 'B', 1: 'B'}
             },
             start: 'S',
             acceptStates: ['A']
@@ -65,16 +65,16 @@ const dfaTests: {
     exam2problem4: {
         description: {
             transitions: {
-                a: {0: 'b', 1: 'dead'},
-                b: {0: 'c', 1: 'dead'},
-                c: {0: 'cd', 1: 'c'},
-                cd: {0: 'cd', 1: 'ace'},
-                ace: {0: 'bcd', 1: 'c'},
-                bcd: {0: 'cd', 1: 'ace'},
-                dead: {0: 'dead', 1: 'dead'}
+                a: {0: 'b', 1: 'g'},
+                b: {0: 'c', 1: 'g'},
+                c: {0: 'd', 1: 'c'},
+                d: {0: 'd', 1: 'e'},
+                e: {0: 'f', 1: 'c'},
+                f: {0: 'd', 1: 'e'},
+                g: {0: 'g', 1: 'g'}
             },
             start: 'a',
-            acceptStates: ['ace']
+            acceptStates: ['e']
         },
         accepted: [
             '0001',
@@ -175,33 +175,6 @@ const nfaTests: {
         ],
     },
 
-    startsAndEndsWith1WithLambda: {
-        description: {
-            transitions: {
-                A: {1: ['B']},
-                B: {0: ['B'], 1: ['B', 'C']},
-                C: {lambda: ['D']},
-                D: {}
-            },
-            start: 'A',
-            acceptStates: ['D']
-        },
-        accepted: [
-            '11',
-            '101',
-            '111',
-            '110011001',
-            '101111111101'
-        ],
-        rejected: [
-            '',
-            '1',
-            '111110',
-            '010101',
-            '1010101110'
-        ],
-    },
-
     exam2problem4: {
         description: {
             transitions: {
@@ -226,10 +199,38 @@ const nfaTests: {
             '10001',
             '001010'
         ],
+    },
+
+    startsAndEndsWith1WithLambda: {
+        description: {
+            transitions: {
+                A: {1: ['B']},
+                B: {0: ['B'], 1: ['B', 'C']},
+                C: {lambda: ['dead']},
+                dead: {} //my NFAtoDFA creates a dead state,
+            },           //but will add a * if 'dead' is taken like here
+            start: 'A',
+            acceptStates: ['dead']
+        },
+        accepted: [
+            '11',
+            '101',
+            '111',
+            '110011001',
+            '101111111101'
+        ],
+        rejected: [
+            '',
+            '1',
+            '111110',
+            '010101',
+            '1010101110'
+        ],
     }
 
 }
 
+/* tests each DFA's constructor, transitions, and acceptance */
 for(const [name, testDesc] of Object.entries(dfaTests)) {
     test(`${name}/dfa/constructor`, (t) =>{
         const dfa = new DFA(testDesc.description);
@@ -261,6 +262,7 @@ for(const [name, testDesc] of Object.entries(dfaTests)) {
     });
 }
 
+/* tests each NFA's constructor, transitions, and acceptance */
 for(const [name, testDesc] of Object.entries(nfaTests)) {
     test(`${name}/nfa/constructor`, (t) =>{
         const nfa = new NFA(testDesc.description);
@@ -292,20 +294,51 @@ for(const [name, testDesc] of Object.entries(nfaTests)) {
     });
 }
 
-test(`NFAtoDFA and minimizeDFA`, (t) => {
-    let nfa = new NFA(nfaTests['startsWith0'].description)
-    let dfa = new DFA(dfaTests['startsWith0'].description)
-    t.assert(minimizeDFA(NFAtoDFA(nfa)).equals(minimizeDFA(dfa)));
+/* compares every NFA and DFA with the same name in the tests
+by minimizing the DFA, converting the NFA to DFA, and minimizing
+this NFAtoDFA*/
+for(const [name, testDesc] of Object.entries(nfaTests)) {
+    if (dfaTests[name]) {
+        test(`${name}/minimizeDFA & NFAtoDFA`, (t) => {
+            let dfa = new DFA(dfaTests[name].description)
+            let minDFA = minimizeDFA(dfa)
 
-    nfa = new NFA(nfaTests['exam2problem4'].description)
-    dfa = new DFA(dfaTests['exam2problem4'].description)
-    t.assert(minimizeDFA(NFAtoDFA(nfa)).equals(minimizeDFA(dfa)));
+            let nfa = new NFA(testDesc.description)
+            let nfaToDFA = NFAtoDFA(nfa)
+            let minNFAtoDFA = minimizeDFA(nfaToDFA);
 
-    nfa = new NFA(nfaTests['startsAndEndsWith1'].description)
+            console.log(name)
+            console.log('-------------')
+            console.log("NFA:\n", JSON.stringify(nfa.getDescription()))
+            console.log("NFAtoDFA:\n", JSON.stringify(nfaToDFA.getDescription()))
+            console.log("DFA:\n", JSON.stringify(dfa.getDescription()))
+            console.log("min NFAtoDFA:\n", JSON.stringify(minNFAtoDFA.getDescription()))
+            console.log("min DFA:\n", JSON.stringify(minDFA.getDescription()), '\n')
+
+            t.assert(JSON.stringify(minDFA.getDescription()) === JSON.stringify(minNFAtoDFA.getDescription()))
+        })
+    }
+}
+
+/* minimizes & compares two equivalent but differently implemented NFAs
+by minimizing and converting both to DFAs (this standardizes state names)*/
+test(`startsAndEndsWith1/minimizeDFA & NFAtoDFA`, (t) => {
+    let nfa = new NFA(nfaTests['startsAndEndsWith1'].description)
+    let nfaToDFA = NFAtoDFA(nfa)
+    let minNFAtoDFA = minimizeDFA(nfaToDFA);
+
     let nfa2 = new NFA(nfaTests['startsAndEndsWith1WithLambda'].description)
-    console.log(JSON.stringify(nfa.getDescription()))
-    console.log(JSON.stringify(nfa2.getDescription()))
-    console.log(JSON.stringify(NFAtoDFA(nfa).getDescription()))
-    console.log(JSON.stringify(NFAtoDFA(nfa2).getDescription()))
-    t.assert(minimizeDFA(NFAtoDFA(nfa)).equals(minimizeDFA(NFAtoDFA(nfa2))));
+    let nfaToDFA2 = NFAtoDFA(nfa2)
+    let minNFAtoDFA2 = minimizeDFA(nfaToDFA2);
+
+    console.log('startsAndEndsWith1')
+    console.log('-------------')
+    console.log("NFA:\n", JSON.stringify(nfa.getDescription()))
+    console.log("NFA2:\n", JSON.stringify(nfa2.getDescription()))
+    console.log("NFAtoDFA:\n", JSON.stringify(nfaToDFA.getDescription()))
+    console.log("NFAtoDFA2:\n", JSON.stringify(nfaToDFA2.getDescription()))
+    console.log("min NFAtoDFA:\n", JSON.stringify(minNFAtoDFA.getDescription()))
+    console.log("min NFAtoDFA2:\n", JSON.stringify(minNFAtoDFA2.getDescription()), '\n')
+
+    t.assert(JSON.stringify(minNFAtoDFA.getDescription()) === JSON.stringify(minNFAtoDFA2.getDescription()))
 });

@@ -20,7 +20,7 @@ export default class DFA {
     }
 
     getDescription(): DFADescription {
-        return this.description;
+        return JSON.parse(JSON.stringify(this.description))
     }
 
     transition(state: State, symbol: InputSymbol): State {
@@ -43,5 +43,4 @@ export default class DFA {
     equals(dfa: DFA): boolean {
         return JSON.stringify(this.description) === JSON.stringify(dfa.getDescription())
     }
-
 }

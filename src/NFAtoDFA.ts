@@ -17,7 +17,9 @@ function combineTransitionStates(symbol, stateTransitions, nfaTransitions: NFADe
 
 export function NFAtoDFA(nfa: NFA): DFA {
     let description = nfa.getDescription();
-    description.transitions['dead'] = {0: ['dead'], 1: ['dead']} //add a dead state to the original transitions
+    let deadState = 'dead'
+    while (Object.keys(description.transitions).includes(deadState)) { deadState += '*' } //ensures it's a new state name
+    description.transitions[deadState] = {0: [deadState], 1: [deadState]} //add a dead state to the original transitions
     let newDescription = {
         transitions: {},
         start: null,
@@ -52,7 +54,7 @@ export function NFAtoDFA(nfa: NFA): DFA {
 
         for (let i = 0; i <= 1; i++) {
             if (!newTransitions[i]) { //if no transition, point to a dead state
-                newTransitions[i] = ['dead'];
+                newTransitions[i] = [deadState];
             }
         }
 

@@ -12,6 +12,6 @@ NFA to DFA, then minimize both the new DFA and original DFA
 (which also standardizes the state names). Finally, it checks if their descriptions
 are equal. This test also prints out the NFAs and DFAs at each step.
 
-Note: Since an NFA simulator, NFA to DFA function, and DFA Minimizer
+Note: Since an NFA simulator, NFA to DFA converter, and DFA Minimizer
 are all standalone projects, I have done all three for extra credit
 (and because it was a fun challenge and I wanted to showcase my understanding!)

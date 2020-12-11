@@ -9,7 +9,7 @@ function combineTransitionStates(symbol, stateTransitions, nfaTransitions: NFADe
                 [...new Set([...stateTransitions[key], ...value])].sort() : value;
         for (const state of stateTransitions[key]) { //if any states have a lambda move, combine with it
             if (nfaTransitions[state] && nfaTransitions[state]['lambda']) {
-                stateTransitions[key] = [...stateTransitions[key], ...nfaTransitions[state]['lambda']].sort()
+                stateTransitions[key] = [...new Set([...stateTransitions[key], ...nfaTransitions[state]['lambda']])].sort()
             }
         }
     }
@@ -17,6 +17,14 @@ function combineTransitionStates(symbol, stateTransitions, nfaTransitions: NFADe
 
 export function NFAtoDFA(nfa: NFA): DFA {
     let description = nfa.getDescription();
+    //if any state is mention in a transitions but has no transitions, add state: empty transition {}
+    for (const stateTransitions of Object.values(description.transitions)) {
+        for (const nextState of Object.values(stateTransitions).flatMap(e => e)) {
+            if (!Object.keys(description.transitions).includes(nextState)) {
+                description.transitions[nextState] = {}
+            }
+        }
+    }
     let deadState = 'dead'
     while (Object.keys(description.transitions).includes(deadState)) { deadState += '*' } //ensures it's a new state name
     description.transitions[deadState] = {0: [deadState], 1: [deadState]} //add a dead state to the original transitions
@@ -29,7 +37,7 @@ export function NFAtoDFA(nfa: NFA): DFA {
     let stack = [[description.start]];
 
     while (stack.length > 0) {
-        let firstStates = stack[stack.length - 1];
+        let firstStates = [...stack[stack.length - 1]];
         let states = stack.pop();
         let newTransitions: {
             lambda?: State[],

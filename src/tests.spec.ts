@@ -61,6 +61,31 @@ const dfaTests: {
             '110101'
         ],
     },
+    
+    exam2problem3: {
+        description: {
+            transitions: {
+                ab: {0: 'ab', 1: 'c'},
+                c: {0: 'd', 1:'e'},
+                d: {0: 'e', 1: 'e'},
+                e: {0: 'e', 1: 'e'}
+            },
+            start: 'ab',
+            acceptStates: ['d']
+        },
+        accepted: [
+            '10',
+            '010',
+            '0010',
+            '000010'
+        ],
+        rejected: [
+            '100',
+            '1010',
+            '01010',
+            '0000101'
+        ]
+    },
 
     /* This is the problem that Brightspace marked wrong on Exam 2 and we looked at in office hours.
     Thought it would be fun to compare my answer to the original NFA (in the NFA list).
@@ -176,6 +201,30 @@ const nfaTests: {
             '1010101110',
             '1011111111010'
         ],
+    },
+
+    exam2problem3: {
+        description: {
+            transitions: {
+                a: {0: ['b'], 1: ['c'], lambda: ['b']},
+                b: {0: ['a']},
+                c: {0: ['d']}
+            },
+            start: 'a',
+            acceptStates: ['d']
+        },
+        accepted: [
+            '10',
+            '010',
+            '0010',
+            '000010'
+        ],
+        rejected: [
+            '100',
+            '1010',
+            '01010',
+            '0000101'
+        ]
     },
 
     exam2problem4: {

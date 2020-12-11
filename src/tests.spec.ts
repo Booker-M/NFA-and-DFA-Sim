@@ -62,6 +62,9 @@ const dfaTests: {
         ],
     },
 
+    /* This is the problem that Brightspace marked wrong on Exam 2 and we looked at in office hours.
+    Thought it would be fun to compare my answer to the original NFA (in the NFA list).
+    Sure enough, my DFA IS equivalent to the question's NFA (at least, according to my NFAtoDFA) */
     exam2problem4: {
         description: {
             transitions: {

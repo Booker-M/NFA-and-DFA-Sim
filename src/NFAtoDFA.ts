@@ -17,7 +17,7 @@ function combineTransitionStates(symbol, stateTransitions, nfaTransitions: NFADe
 
 export function NFAtoDFA(nfa: NFA): DFA {
     let description = nfa.getDescription();
-    //if any state is mention in a transitions but has no transitions, add state: empty transition {}
+    //if any state is mention in transitions but has no transitions, add state: empty transition {}
     for (const stateTransitions of Object.values(description.transitions)) {
         for (const nextState of Object.values(stateTransitions).flatMap(e => e)) {
             if (!Object.keys(description.transitions).includes(nextState)) {

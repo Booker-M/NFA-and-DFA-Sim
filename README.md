@@ -1,7 +1,7 @@
 # Finite State Automata
 ## By Booker Martin
 
-In addition to adding expanding the DFA simulator done together in CMSI 385,
+In addition to expanding the DFA simulator done together in CMSI 385,
 I have created an **NFA simulator** and two useful functions:
 1. **NFA to DFA**
 2. **DFA Minimizer**

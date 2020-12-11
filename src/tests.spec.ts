@@ -61,6 +61,31 @@ const dfaTests: {
             '110101'
         ],
     },
+
+    notDiv3: { //to test multiple accept states
+        description: {
+            transitions: {
+                r0: {0: 'r0', 1: 'r1'},
+                r1: {0: 'r2', 1: 'r0'},
+                r2: {0: 'r1', 1: 'r2'}
+            },
+            start: 'r0',
+            acceptStates: ['r1', 'r2']
+        },
+        accepted: [
+            '10',
+            '1',
+            '1000',
+            '110101'
+        ],
+        rejected: [
+            '',
+            '0',
+            '000',
+            '110',
+            '101111111101'
+        ],
+    },
     
     exam2problem3: {
         description: {
@@ -173,6 +198,31 @@ const nfaTests: {
             '1',
             '1000',
             '110101'
+        ],
+    },
+
+    notDiv3: {
+        description: {
+            transitions: {
+                r0: {0: ['r0'], 1: ['r1']},
+                r1: {0: ['r2'], 1: ['r0']},
+                r2: {0: ['r1'], 1: ['r2']}
+            },
+            start: 'r0',
+            acceptStates: ['r1', 'r2']
+        },
+        accepted: [
+            '10',
+            '1',
+            '1000',
+            '110101'
+        ],
+        rejected: [
+            '',
+            '0',
+            '000',
+            '110',
+            '101111111101'
         ],
     },
 

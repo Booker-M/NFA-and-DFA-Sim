@@ -9,7 +9,7 @@ export function minimizeDFA(dfa: DFA): DFA {
     };
     let nonAcceptStates = Object.keys(description.transitions).filter(state => !description.acceptStates.includes(state));
     let groups = [];
-    let nextGroups =[[description.acceptStates, [null, null]], [nonAcceptStates, [null, null]]];
+    let nextGroups =[[[...description.acceptStates], [null, null]], [nonAcceptStates, [null, null]]];
 
     while (JSON.stringify(groups) !== JSON.stringify(nextGroups)) { //continues until k-equivalence
         groups = nextGroups;

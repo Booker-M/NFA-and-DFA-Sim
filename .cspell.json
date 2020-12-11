@@ -32,6 +32,7 @@
         "node_modules/**"
     ],
     "ignoreWords": [
+        "brightspace",
         "clonedeep",
         "cmsi",
         "dfa's",
